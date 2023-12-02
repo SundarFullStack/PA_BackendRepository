@@ -1,0 +1,4 @@
+mongodb+srv://meenakshisunder183017:DMLab1%40pacr.org@sundar.qhyhwwt.mongodb.net/UserAuthApp
+Username: meenakshisunder183017
+password: DMLab1%40pacr.org@sundar
+nodemailerPass:ivzo aslb ttns sfzt
