@@ -1,43 +1,36 @@
 const express = require("express");
 const router = express.Router();
-const { AuthorizeUser } = require('../Controller/login');
+const userdb = require("../Model/user")
+const AuthenticateUser = require('../middleware/AuthenticateUser');
+const jwt = require("jsonwebtoken");
+const userDB = require("../Model/user");
+const dotenv = require("dotenv");
+dotenv.config();
 
+router.get("/", async (req, res) => {
+  try {
 
-router.get('/', async (req, res) => {
+    const token = req.headers.authorization;
+    // console.log("token",token)
+    const verifytoken = jwt.verify(token,process.env.login_secret_token);
+    // console.log("verifyToken", verifytoken);
+    if (verifytoken) {
+      res.status(201).json({ status: 201, message:"User Valid" });
+    } else {
+      res.status(401).json({
+        success:false,
+        message:"User Not Valid"
+      })
+    }
 
-    try {
-
-        const auth_token = await req.headers.authorization;
-        console.log("auth_token",auth_token)
-        
-        const login_credentials = AuthorizeUser(auth_token);
-
-        const loginData = await login_credentials.then((data) => {
-            return data
-        })
-        // console.log("loginData",loginData)
-
-        if (login_credentials == false) {
-            res.status(200).json({
-                success: false,
-                message:"Invalid Token"
-            })
-        }
-        else {
-            res.status(200).json({
-                success: true,
-                message: "Token Verified successfully",
-                data:loginData
-            })
-        }
+    
+  
+      
         
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message:"Server Busy"
-        })
-    }
-    
-})
+      res.status(401).json({ status: 401, error });
+  }
+  
+  });
 
 module.exports = router;

@@ -1,13 +1,9 @@
 const express = require("express");
 const router = express.Router(); 
 const { AuthenticateUser } = require("../Controller/login")
-const client = require("../redis");
 
-client.connect().then(() => {
-    console.log("COnnected to redis Successfully")
-}).catch((error) => {
-    console.log("error")
-})
+
+
 
 router.post("/", async (req, res) => {
 
@@ -31,6 +27,10 @@ router.post("/", async (req, res) => {
             })
         }
         else {
+
+     
+
+            
             res.status(200).json({
                 success: true,
             message: "User Authenticated Successfully!!",
