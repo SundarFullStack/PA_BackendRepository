@@ -3,7 +3,7 @@ const router = express.Router();
 const { CheckUser } = require("../Controller/login")
 const {InsertVerifyUser,InsertSignUpUser} = require("../Controller/Signin")
 
-
+     
 //Sign Up User End Point
 
 router.get("/:token", async (req, res) => {

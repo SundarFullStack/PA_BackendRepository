@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const userdb = require("../Model/user")
-const AuthenticateUser = require('../middleware/AuthenticateUser');
 const jwt = require("jsonwebtoken");
-const userDB = require("../Model/user");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv"); 
 dotenv.config();
 
 router.get("/", async (req, res) => {

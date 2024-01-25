@@ -6,6 +6,7 @@ connectDB();
 const signinRouter = require("./Routes/signin"); 
 const loginRouter = require("./Routes/login")
 const homeRouter = require("./Routes/home")
+const prodRouter = require("./Routes/ProfileProd")
 const cors = require("cors");
 
 app.use(express.json());
@@ -21,6 +22,8 @@ app.use("/signin", signinRouter);
 app.use("/login", loginRouter);
 
 app.use("/home", homeRouter);
+
+app.use ("/prodData",prodRouter)
 
 app.listen(port, () => {
     console.log(`Server started successfully in the port:${port}`)

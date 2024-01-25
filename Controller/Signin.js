@@ -2,7 +2,6 @@ const User = require("../Model/user");
 const verifyUser = require("../Model/verifyUser");
 const { sendMail } = require("./SendMail");
 const bcrypt = require("bcrypt");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
 const jwt = require("jsonwebtoken");
@@ -24,7 +23,7 @@ async function InsertVerifyUser(name, email, password) {
             token:token
         })
 
-        const activationLink = `http://localhost:4000/signin/${token}`;
+        const activationLink = `https://auth-be-3xd1.onrender.com/${token}`;
 
         const content = `<h4>Hi, there</h4>
         <h5>Welcome to the app</h5>
