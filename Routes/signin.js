@@ -20,7 +20,7 @@ router.get("/:token", async (req, res) => {
         <body><h1>Registration Failed</h1>
         <p>Can't able to sign Up</p>
         <p>Regards</p>
-        <p>Sundar</p></body>
+        <p>Sundar.T</p></body>
         </html>`)
         
     }

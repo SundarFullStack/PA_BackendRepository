@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
 
         const loginCredentials = await AuthenticateUser(email,password);
 
-        // console.log("loginCredentials", loginCredentials);
+        console.log("loginCredentials", loginCredentials);
 
         if (loginCredentials == "Invalid Username or password") {
             res.status(200).json({
@@ -28,9 +28,6 @@ router.post("/", async (req, res) => {
         }
         else {
 
-     
-
-            
             res.status(200).json({
                 success: true,
             message: "User Authenticated Successfully!!",

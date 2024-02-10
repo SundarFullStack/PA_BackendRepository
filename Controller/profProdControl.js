@@ -1,10 +1,11 @@
 const prodColl = require("../Model/ProdColl");
 
 async function InsertProdData(ProfileCode,
-    ProfileDesc,
+    // ProfileDesc,
     ProdStartTime,
     ProdEndTime,
     Line,
+    Scrap,
     ProfileLen,
     ProdInCharge,
     ProdOperator,
@@ -15,10 +16,10 @@ async function InsertProdData(ProfileCode,
 
         const prodData = new prodColl({
             ProfileCode: ProfileCode,
-            ProfileDesc: ProfileDesc,
             ProdStartTime: ProdStartTime,
             ProdEndTime: ProdEndTime,
             Line: Line,
+            Scrap:Scrap,
             ProfileLen: ProfileLen,
             ProdInCharge: ProdInCharge,
             ProdOperator: ProdOperator,
@@ -28,7 +29,7 @@ async function InsertProdData(ProfileCode,
 
         const savedProdData = await prodData.save();
 
-        console.log("savedProdData",savedProdData);
+        // console.log("savedProdData",savedProdData);
 
         return savedProdData;
     }

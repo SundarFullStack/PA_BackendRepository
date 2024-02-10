@@ -5,10 +5,10 @@ const prodSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  ProfileDesc: {
-    type: String,
-    required: true,
-  },
+  // ProfileDesc: {
+  //   type: String,
+  //   required: true,
+  // },
   ProdStartTime: {
     type: Date,
     default:new Date()
@@ -18,6 +18,10 @@ const prodSchema = new mongoose.Schema({
     default:new Date()
   },
   Line: {
+    type: String,
+    required: true,
+  },
+  Scrap: {
     type: Number,
     required: true,
   },

@@ -41,7 +41,7 @@ async function AuthenticateUser(email, password) {
                 id: userValid._id,
                 name: userValid.name,
                 email: userValid.email,
-                token: userValid.token,
+                token: token,
                 status:true
             }
 
