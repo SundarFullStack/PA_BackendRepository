@@ -1,70 +1,64 @@
 const User = require("../Model/user");
 const dotenv = require("dotenv");
 dotenv.config();
-const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
+// CheckUser FOR VALIDATING USER WITH EMAIL ID. IS USER EXIST OR NOT?
 
 async function CheckUser(email) {
-    
-    try {
+  try {
+    const userValid = await User.findOne({ email: email });
 
-        const userValid = await User.findOne({ email: email });
-        // console.log("userValid",userValid)
-        
-        if (!userValid) {
-            return false
-        }
-        else {
-            return true
-        }
-        
-    } catch (error) {
-
-        return "Server Busy"
-
+    if (!userValid) {
+      return false;
+    } else {
+      return true;
     }
+  } catch (error) {
+    return "Server Busy";
+  }
 }
 
+// AuthenticateUser CONTROLLER IS USED FOR HANDLING LOGIN FUNCTIONALITIES
 async function AuthenticateUser(email, password) {
-    try {
+  try {
+    const userValid = await User.findOne({ email: email });
 
-        const userValid = await User.findOne({ email: email });
-        
-        const validPassword = await bcrypt.compare(password, userValid.password);
+    // COMPARING LOGIN PASSWORD WITH REGISTERED PASSWORD
 
-        if (validPassword) {
-            
-            const token = jwt.sign({ email }, process.env.login_secret_token);
+    const validPassword = await bcrypt.compare(password, userValid.password);
 
-            const response = {
-                id: userValid._id,
-                name: userValid.name,
-                email: userValid.email,
-                token: token,
-                status:true
-            }
+    if (validPassword) {
+      // CREATING NEW LOGIN TOKEN FOR USER
 
-            
+      const token = jwt.sign({ email }, process.env.login_secret_token);
 
-            await User.findOneAndUpdate({ email: userValid.email }, { $set: { token: token } }, { new: true });
+      const response = {
+        id: userValid._id,
+        name: userValid.name,
+        email: userValid.email,
+        token: token,
+        status: true,
+      };
 
-            return response
+      // UPDATING THAT NEW LOGIN PASSWORD IN USER COLLECTION
 
-        } else {
-            return "Invalid Username or password"
-        }
-        
-    } catch (error) {
+      await User.findOneAndUpdate(
+        { email: userValid.email },
+        { $set: { token: token } },
+        { new: true }
+      );
 
-        console.log("Error", error);
-
-        return "Server Busy"
-        
+      return response;
+    } else {
+      return "Invalid Username or password";
     }
+  } catch (error) {
+    console.log("Error", error);
+
+    return "Server Busy";
+  }
 }
 
-
-
-
-module.exports = {CheckUser,AuthenticateUser}
+module.exports = { CheckUser, AuthenticateUser };

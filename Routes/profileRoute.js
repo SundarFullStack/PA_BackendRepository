@@ -1,20 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const profileDB = require("../Model/Profile");
-const lineColl = require("../Model/Line")
+const lineColl = require("../Model/Line");
 const operatorColl = require("../Model/Operator");
 const InchargeColl = require("../Model/ShiftIncharge");
 
-
-//For Create Profile Codes
+//OPERATION: FOR CREATING PROFILE CODES
 
 router.post("/insert", async (req, res) => {
   try {
     const { profileCode, profileDesc } = req.body;
     // console.log(profileCode, profileDesc);
 
-    const verifyProfile = await profileDB.findOne({ profile_code:profileCode });
-      // console.log("verifyProfile",verifyProfile);
+    const verifyProfile = await profileDB.findOne({
+      profile_code: profileCode,
+    });
+    // console.log("verifyProfile",verifyProfile);
     if (!verifyProfile) {
       const profileData = new profileDB({
         profile_code: profileCode,
@@ -37,19 +38,18 @@ router.post("/insert", async (req, res) => {
       }
 
       // console.log(savedProfile);
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Profile Already Exist",
+      });
     }
-    else {
-        res.status(400).json({
-          success: false,
-          message: "Profile Already Exist",
-        });
-      }
   } catch (error) {
     console.log("Error", error);
   }
 });
 
-// FOr Profile Code
+// OPERATION: SEND PROFILE CODES AGAINST CODES FOR DROPDOWNS FROM "profileDB" TABLE
 
 router.get("/profileCode", async (req, res) => {
   try {
@@ -59,93 +59,86 @@ router.get("/profileCode", async (req, res) => {
       res.status(200).json({
         success: true,
         message: "Profile Code Fetched Successfully!",
-        profileCode: profileCodeData
-      })
+        profileCode: profileCodeData,
+      });
     } else {
       res.status(400).json({
         success: false,
-        message: "Error in fetching Profile Code!"
-      })
-      
+        message: "Error in fetching Profile Code!",
+      });
     }
   } catch (error) {
-      console.log("Error", error);
-   
+    console.log("Error", error);
   }
-}
-  )
+});
 
-  // For Get Line Data from Line Collection
+// OPERATION: SEND PRODUCTION LINES FOR DROPDOWNS FROM LINE TABLE
 
 router.get("/line", async (req, res) => {
-  try{
+  try {
     const lineData = await lineColl.find();
-  
+
     if (lineData) {
       res.status(200).json({
-        success:true,
+        success: true,
         message: "Line Data fetching Successfully!",
-        data:lineData
-      })
+        data: lineData,
+      });
     } else {
       res.status(400).json({
-        success:false,
+        success: false,
         message: "Error In fetching Line Data",
-      })
+      });
     }
-  
-  }catch(error){
-console.log("Error",error)
+  } catch (error) {
+    console.log("Error", error);
   }
-})
+});
 
-  // For Get Operators Data from Operators Collection
+// OPERATION: SEND PRODUCTION OPERATORS FOR DROPDOWNS FROM "operatorColl" TABLE
 
-  router.get("/operator", async (req, res) => {
-    try{
-      const operatorData = await operatorColl.find();
-    
-      if (operatorData) {
-        res.status(200).json({
-          success:true,
-          message: "operator Data fetching Successfully!",
-          data:operatorData
-        })
-      } else {
-        res.status(400).json({
-          success:false,
-          message: "Error In fetching operator Data",
-        })
-      }
-    
-    }catch(error){
-  console.log("Error",error)
+router.get("/operator", async (req, res) => {
+  try {
+    const operatorData = await operatorColl.find();
+
+    if (operatorData) {
+      res.status(200).json({
+        success: true,
+        message: "operator Data fetching Successfully!",
+        data: operatorData,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Error In fetching operator Data",
+      });
     }
-  })
+  } catch (error) {
+    console.log("Error", error);
+  }
+});
 
-  
-  // For Get Incharge Data from Incharge Collection
+//OPERATION: SEND PRODUCTION IN-CHARGE FOR DROPDOWNS FROM "InchargeColl" TABLE
 
-  router.get("/incharge", async (req, res) => {
-    try{
-      const inchargeData = await InchargeColl.find();
-    
-      if (inchargeData) {
-        res.status(200).json({
-          success:true,
-          message: "Incharge Data fetching Successfully!",
-          data:inchargeData
-        })
-      } else {
-        res.status(400).json({
-          success:false,
-          message: "Error In fetching Incharge Data",
-        })
-      }
-    
-    }catch(error){
-  console.log("Error",error)
+router.get("/incharge", async (req, res) => {
+  try {
+    const inchargeData = await InchargeColl.find();
+
+    if (inchargeData) {
+      res.status(200).json({
+        success: true,
+        message: "Incharge Data fetching Successfully!",
+        data: inchargeData,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Error In fetching Incharge Data",
+      });
     }
-  })
+  } catch (error) {
+    console.log("Error", error);
+  }
+});
 
 module.exports = router;

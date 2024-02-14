@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const StoreColl = require("../Model/ProfStore");
-const PalletModel = require("../Model/StorePallets")
-const LocationModel = require("../Model/StoreLocation")
-const StoreInCHargeModel = require("../Model/StoreInCharge")
-const StoreIssueColl = require("../Model/ProfileIssue")
-//For Profile Consumption
+const PalletModel = require("../Model/StorePallets");
+const LocationModel = require("../Model/StoreLocation");
+const StoreInCHargeModel = require("../Model/StoreInCharge");
+
+//OPERATION: FOR SAVING PROFILE CONSUMPTION DETAILS IN STORE COLLECTION "StoreColl"
+
 router.post("/", async (req, res) => {
   try {
     const {
@@ -28,6 +29,8 @@ router.post("/", async (req, res) => {
     //   Shift
     // );
 
+    // VALIDATING IF ALL PROFILE CONSUMPTION DETAILS ARE AVAIL OR NOT FOR SAVING CONSUMPTION DETAILS
+
     if (
       !ProfileCode ||
       !ConsumptionDate ||
@@ -49,11 +52,14 @@ router.post("/", async (req, res) => {
         ConsumedBy: ConsumedBy,
         PalletNo: PalletNo,
         Location: Location,
-        Shift: Shift
+        Shift: Shift,
+        IssuedDate: new Date(),
+        IssuedBy: "Employee",
+        ConsumedQty: 0,
+        IssuedQty: 0,
       });
 
       const savedData = await StoreData.save();
-      
 
       if (savedData) {
         res.status(200).json({
@@ -73,134 +79,117 @@ router.post("/", async (req, res) => {
   }
 });
 
-//For Getting Report
+//OPERATION : FOR SENDING CONSUMPTION DETAILS AS REPORT AGAINST SOME CONDITIONS
 router.post("/report", async (req, res) => {
-    try {
-      const { ProfileCode, StartDate, EndDate } = await req.body;
-      
-      // console.log(ProfileCode, StartDate, EndDate);
+  try {
+    const { ProfileCode, StartDate, EndDate } = await req.body;
 
-      //Aggregate Filteration
+    // console.log(ProfileCode, StartDate, EndDate);
 
-      const matchCriteria = {
-        ProfileCode:ProfileCode,
-        ConsumptionDate: {
-          $gte: new Date(StartDate),
-          $lte: new Date(EndDate),
-        },
-       
-      };
-    
-      //Aggregation pipeline
+    //MATCHING CONDITION
 
-      const pipeline = [
-        {
-          $match: matchCriteria,
-        },
-      ];
-    
-      //Aggregate operation
+    const matchCriteria = {
+      ProfileCode: ProfileCode,
+      ConsumptionDate: {
+        $gte: new Date(StartDate),
+        $lte: new Date(EndDate),
+      },
+    };
 
-      const result = await StoreIssueColl.aggregate(pipeline)
-    
-        // console.log('Aggregate result:', result);
-    
-    
+    //Aggregation pipeline
+
+    const pipeline = [
+      {
+        $match: matchCriteria,
+      },
+    ];
+
+    //Aggregate operation
+
+    const result = await StoreColl.aggregate(pipeline);
+
+    // console.log('Aggregate result:', result);
+
     if (result) {
-        res.status(200).json({
-            success:true,
-            message: "Store Details Fetched Successfully!!!",
-            report:result
-            
-
-        })
+      res.status(200).json({
+        success: true,
+        message: "Store Details Fetched Successfully!!!",
+        report: result,
+      });
     } else {
-        res.status(400).json({
-            success:false,
-            message: "Error In Fetching Store Details!!!",
-            
-
-        })
+      res.status(400).json({
+        success: false,
+        message: "Error In Fetching Store Details!!!",
+      });
     }
-   }catch(error){
-        console.log("error", error);
-        res.status(500).json({
-            success: false,
-            message: "Server Busy",
-            Error: error
-        })
-   }
-})
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Busy",
+      Error: error,
+    });
+  }
+});
 
-//Select Quality InCharge
+//OPERATION: FOR SENDING STORE IN-CHARGE DETAILS FOR DROPDOWNS FROM "StoreInCHargeModel" COLLECTION
 
 router.get("/InCharge", async (req, res) => {
   const InCharge = await StoreInCHargeModel.find();
   // console.log(InCharge)
 
   if (InCharge) {
-      res.status(200).json({
-          success:true,
-          message: "InCharge Details Fetched Successfully!!!",
-          InCharge:InCharge
-          
-
-      })
+    res.status(200).json({
+      success: true,
+      message: "InCharge Details Fetched Successfully!!!",
+      InCharge: InCharge,
+    });
   } else {
-      res.status(400).json({
-          success:false,
-          message: "Error In Fetching InCharge Details!!!",
-          
-
-      })
+    res.status(400).json({
+      success: false,
+      message: "Error In Fetching InCharge Details!!!",
+    });
   }
-})
-//Select Quality Pallets
+});
+
+//OPERATION: FOR SENDING STORE Pallets DETAILS FOR DROPDOWNS FROM "PalletModel" COLLECTION
 
 router.get("/Pallets", async (req, res) => {
   const Pallets = await PalletModel.find();
   // console.log(Pallets)
 
   if (Pallets) {
-      res.status(200).json({
-          success:true,
-          message: "Pallets Details Fetched Successfully!!!",
-          Pallets:Pallets
-          
-
-      })
+    res.status(200).json({
+      success: true,
+      message: "Pallets Details Fetched Successfully!!!",
+      Pallets: Pallets,
+    });
   } else {
-      res.status(400).json({
-          success:false,
-          message: "Error In Fetching Pallets Details!!!",
-          
-
-      })
+    res.status(400).json({
+      success: false,
+      message: "Error In Fetching Pallets Details!!!",
+    });
   }
-})
-//Select Quality location
+});
+
+//OPERATION: FOR SENDING STORE Location DETAILS FOR DROPDOWNS FROM "LocationModel" COLLECTION
 
 router.get("/Location", async (req, res) => {
   const Location = await LocationModel.find();
   // console.log(Location)
 
   if (Location) {
-      res.status(200).json({
-          success:true,
-          message: "Location Details Fetched Successfully!!!",
-          Location:Location
-          
-
-      })
+    res.status(200).json({
+      success: true,
+      message: "Location Details Fetched Successfully!!!",
+      Location: Location,
+    });
   } else {
-      res.status(400).json({
-          success:false,
-          message: "Error In Fetching Location Details!!!",
-          
-
-      })
+    res.status(400).json({
+      success: false,
+      message: "Error In Fetching Location Details!!!",
+    });
   }
-})
-
+});
 
 module.exports = router;

@@ -5,16 +5,19 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// VALIDATING THAT USER IS AUTHENTICATED OR NOT AND SEND RESPONSE
+
 router.get("/", async (req, res) => {
   try {
+    // RECEIVING TOKEN FROM HEADERS
+
     const token = req.headers.authorization;
-    // console.log("token",token)
+
+    // VERIFYING RECEIVED TOKEN WITH LOGIN TOKEN
 
     const verifytoken = jwt.verify(token, process.env.login_secret_token);
-    // console.log("verifyToken", verifytoken.email);
 
     const UserValid = await userdb.findOne({ email: verifytoken.email });
-    // console.log("UserValid", UserValid);
 
     if (verifytoken) {
       res

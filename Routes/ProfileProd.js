@@ -3,8 +3,8 @@ const router = express.Router();
 const prodModel = require("../Model/ProdColl");
 const { InsertProdData } = require("../Controller/profProdControl");
 
-// Production API END POINT
-
+// API FOR SAVING ALL PRODUCTION DETAILS IN PRODUCTION COLLECTION
+// METHOD:POST
 router.post("/", async (req, res) => {
   try {
     const {
@@ -29,6 +29,8 @@ router.post("/", async (req, res) => {
     //     ProdOperator,
     //     Shift
     //     )
+    
+    // ENSURING ALL FIELDS ARE AVAIL OR NOT AND SAVING DETAILS
 
     if (
       !ProfileCode ||
@@ -46,6 +48,9 @@ router.post("/", async (req, res) => {
         message: "Error in receiving Data ",
       });
     } else {
+
+      // CALLING "InsertProdData"CONTROLLER FOR SAVING PRODUCTION DETAILS
+
       let savedProdData = await InsertProdData(
         ProfileCode,
         ProdStartTime,
@@ -57,7 +62,9 @@ router.post("/", async (req, res) => {
         ProdOperator,
         Shift
       );
-      console.log("savedProdData", savedProdData);
+
+      // console.log("savedProdData", savedProdData);
+
       if (savedProdData) {
         res.status(200).json({
           success: true,
@@ -71,6 +78,7 @@ router.post("/", async (req, res) => {
         });
       }
     }
+
   } catch (error) {
     console.log("error", error);
     res.status(500).json({
@@ -81,14 +89,15 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Production Report API END POINT
+// API FOR SEND PRODUCTION REPORT
 
 router.post("/profReportData", async (req, res) => {
   try {
     const { ProfileCode, StartDate, EndDate } = await req.body;
 
-    console.log(ProfileCode, StartDate, EndDate);
-    //Aggregate Filteration
+    // console.log(ProfileCode, StartDate, EndDate);
+
+    // CONDITION FOR OUR AGGREGATE METHOD
 
     const matchCriteria = {
         ProfileCode: parseInt(ProfileCode),
@@ -114,6 +123,7 @@ router.post("/profReportData", async (req, res) => {
 
     if (result) {
       res.status(200).json({
+
         success: true,
         message: "Production Details Fetched Successfully!!!",
         report: result,
@@ -133,6 +143,8 @@ router.post("/profReportData", async (req, res) => {
     });
   }
 });
+
+// API FOR SENDING PRODUCTION DETAILS WITH RESPECTIVE TO PROFILE CODE
 
 router.get("/:ProfileCode", async (req, res) => {
   try {
@@ -157,6 +169,8 @@ router.get("/:ProfileCode", async (req, res) => {
     console.log("error",error)
   }
 })
+
+
 
 //Delete all Data from production Table
 

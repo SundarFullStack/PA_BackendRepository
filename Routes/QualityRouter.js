@@ -5,7 +5,8 @@ const ReasonModel = require("../Model/QualityReason")
 const PalletModel = require("../Model/QualityPallets")
 const LocationModel = require("../Model/QualityLocation")
 const InChargeModel = require("../Model/QualityInCharge")
-//For Saving All Quality Details
+
+//OPERATION:For Saving All Quality Details
 
 router.post("/", async (req, res) => {
     try {
@@ -19,15 +20,17 @@ router.post("/", async (req, res) => {
             Location,
             Shift } = await req.body;
         
-        console.log(ProfileCode,
-            HoldReason,
-            HoldedDate,
-            Quantity,
-            Status,
-            HoldedBy,
-            PalletNo,
-            Location,
-            Shift )
+        // console.log(ProfileCode,
+        //     HoldReason,
+        //     HoldedDate,
+        //     Quantity,
+        //     Status,
+        //     HoldedBy,
+        //     PalletNo,
+        //     Location,
+        //     Shift )
+
+        // VALIDATING IF ALL QUALITY DETAILS ARE AVAIL OR NOT FOR SAVING
 
         if (!ProfileCode || !HoldReason || !HoldedDate || !Quantity
             || !Status || !HoldedBy || !PalletNo || !PalletNo || !Location || !Shift) {
@@ -50,7 +53,7 @@ router.post("/", async (req, res) => {
               });
                 
                 const savedData = await QualityData.save();
-                console.log("Controller",savedData);
+                // console.log("Controller",savedData);
 
             if (savedData) {
                 res.status(200).json({
@@ -72,14 +75,13 @@ router.post("/", async (req, res) => {
    }
 })
 
-
-//For Selecting All Quality Details
+//For SENDING All Quality Details AS REPORT BASED ON REQUESTED CONDITION
 
 router.post("/report", async (req, res) => {
     try {
         const {ProfileCode,StartDate,EndDate} = await req.body;
 
-    //Aggregate Filteration
+    //MATCHING CONDITION
 
     const matchCriteria = {
         ProfileCode:ProfileCode,
@@ -131,7 +133,7 @@ router.post("/report", async (req, res) => {
    }
 })
 
-//Select Quality Reasons
+//OPERATION: SENDING ALL REASONS DATA FOR DROPDOWNS FROM "ReasonModel"
 
 router.get("/Reason", async (req, res) => {
     const reasons = await ReasonModel.find();
@@ -155,7 +157,7 @@ router.get("/Reason", async (req, res) => {
     }
 })
 
-//Select Quality InCharge
+//OPERATION: SENDING ALL InCharge DATA FOR DROPDOWNS FROM "InChargeModel"
 
 router.get("/InCharge", async (req, res) => {
     const InCharge = await InChargeModel.find();
@@ -178,7 +180,8 @@ router.get("/InCharge", async (req, res) => {
         })
     }
 })
-//Select Quality Pallets
+
+//OPERATION: SENDING ALL Pallets DATA FOR DROPDOWNS FROM "PalletModel"
 
 router.get("/Pallets", async (req, res) => {
     const Pallets = await PalletModel.find();
@@ -201,7 +204,8 @@ router.get("/Pallets", async (req, res) => {
         })
     }
 })
-//Select Quality location
+
+//OPERATION: SENDING ALL Location DATA FOR DROPDOWNS FROM "LocationModel"
 
 router.get("/Location", async (req, res) => {
     const Location = await LocationModel.find();

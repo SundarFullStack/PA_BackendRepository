@@ -1,18 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const StoreColl = require("../Model/ProfStore");
-const StoreIssueColl = require("../Model/ProfileIssue")
 
-//For Get the document or record respective its individual id
+//OPERATION: FOR SENDING PROFILE CONSUMPTION DETAILS WITH RESPECTIVE TO PROFILE CODE
 
 router.get("/:ProfileCode", async (req, res) => {
   try {
-      const { ProfileCode } = req.params;
-    console.log("ProfileCode", ProfileCode);
+    // DESTRUCTURING PROFILE CODE FROM PARAMS OF REQUEST
+
+    const { ProfileCode } = req.params;
+    // console.log("ProfileCode", ProfileCode);
+
+    // FINDING RECORDS FROM STORE CONSUMPTION TABLE "StoreColl"
 
     const ResDocs = await StoreColl.find({ ProfileCode: ProfileCode });
 
-    console.log("ResDocs", ResDocs);
+    // console.log("ResDocs", ResDocs);
 
     if (ResDocs) {
       res.status(200).json({
@@ -31,58 +34,45 @@ router.get("/:ProfileCode", async (req, res) => {
   }
 });
 
-//For Update the Exist Profile in Store Collection
+//OPERATION : FOR UPDATING PROFILE ISSUE DETAILS AGAINST DOCUMENT ID "_id" IN STORE TABLE "StoreColl"
 
 router.put("/update/:id", async (req, res) => {
   try {
+    // DESTRUCTURING ID AND ISSUE DETAILS FROM PARAMS AND REQUEST BODY
+
     const { id } = req.params;
-    const { qty, updatedDate, updatedBy,PalletNo,Location,Shift } = req.body;
+    const { qty, updatedDate, updatedBy, PalletNo, Location, Shift } = req.body;
 
-    console.log("id,qty", id, qty, updatedDate, updatedBy);
-
+    console.log(qty, updatedDate, updatedBy, PalletNo, Location, Shift )
     // Subtracting Issued qty from exist qty
 
-      const ExistDocs = await StoreColl.findOne({ _id: id });
-      
-      const ExistDocsQty = ExistDocs.Quantity;
+    const ExistDocs = await StoreColl.findOne({ _id: id });
+
+    const ExistDocsQty = ExistDocs.Quantity;
 
     const FinQty = ExistDocs.Quantity - qty;
+
+    // UPDATING ISSUE DETAILS IN CONSUMPTION TABLE
 
     const UpdateProfile = await StoreColl.updateOne(
       { _id: id },
       {
         $set: {
-          Quantity: FinQty
+          Quantity: FinQty,
+          ConsumedQty: ExistDocsQty,
+          IssuedQty: qty,
+          PalletNo: PalletNo,
+          Location: Location,
+          Shift: Shift,
+          IssuedDate: updatedDate,
+          IssuedBy: updatedBy,
         },
       }
     );
 
-      console.log("UpdatedProfile", UpdateProfile);
+    // console.log("UpdatedProfile", UpdateProfile);
 
-      if (UpdateProfile) {
-          
-          const lastPutProfile = await StoreColl.findOne({ _id: id });
-
-          if (lastPutProfile) {
-            const savedIssueProfile = new StoreIssueColl({
-                ProfileCode: lastPutProfile.ProfileCode,
-                ConsumptionDate: lastPutProfile.ConsumptionDate,
-                ConsumedQty: ExistDocsQty,
-                IssuedQty:qty,
-                Quantity: lastPutProfile.Quantity,
-                ConsumedBy: lastPutProfile.ConsumedBy,
-                PalletNo: PalletNo,
-                Location: Location,
-                Shift: Shift,
-                IssuedDate: updatedDate,
-                IssuedBy:updatedBy
-            })
-              
-              const savedData = await savedIssueProfile.save();
-              console.log("savedData", savedData);
-         }
-      
-
+    if (UpdateProfile) {
       res.status(200).json({
         success: true,
         message: "Store Details updated Successfully",
@@ -100,3 +90,9 @@ router.put("/update/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+//ConsumptionQty
+//Quantity
+//IssuedQty
+//IssuedBy
+//Issued Date

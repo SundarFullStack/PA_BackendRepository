@@ -31,6 +31,23 @@ const StoreSchema = new mongoose.Schema({
         type: String,
         required:true,
     },
+    IssuedDate: {
+        type: Date,
+        default:new Date(),
+        required:true,
+    },
+    IssuedQty: {
+        type: Number,
+        required:true,
+    },
+    IssuedBy: {
+        type: String,
+        required:true,
+    },
+    ConsumedQty: {
+        type: Number,
+        required:true,
+    },
 }, {
     collection:"ProfileStore"
 })

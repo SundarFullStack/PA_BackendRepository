@@ -6,116 +6,111 @@ const dotenv = require("dotenv");
 dotenv.config();
 const jwt = require("jsonwebtoken");
 
-//Insert Verify User Controller
+//"InsertVerifyUser" IS USED TO SAVE USER DETAILS IN VERIFICATION TABLE
 
 async function InsertVerifyUser(name, email, password) {
-    try {
-        const salt = await bcrypt.genSalt(10);
+  try {
+    // HASHING PASSWORD WITH CERTAIN DIGITS USING "BCRYPT"
 
-        const hashedPass = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
 
-        const token = generateToken(email);
+    const hashedPass = await bcrypt.hash(password, salt);
 
-        const newUser = new verifyUser({
-            name: name,
-            email: email,
-            password: hashedPass,
-            token: token
-        });
+    // GENERATING TOKEN FOR EMAIL VERIFICATION
 
-        const activationLink = `http://localhost:4000/signin/${token}`;
+    const token = generateToken(email);
 
-        const content = `<h4>Hi, there</h4>
+    const newUser = new verifyUser({
+      name: name,
+      email: email,
+      password: hashedPass,
+      token: token,
+    });
+
+    const activationLink = `http://localhost:4000/signin/${token}`;
+
+    const content = `<h4>Hi, there</h4>
         <h5>Welcome to the app</h5>
         <p>Thank You for signing Up, Click on the below link to activate your account.</p>
         <a href="${activationLink}">Click Here</a>
         <p>Regards</p>
         <p>Sundar</p>
-        `
+        `;
 
-        let savedUser = await newUser.save();
-        
-        sendMail(email, "Verifying User", content);
+    let savedUser = await newUser.save();
 
-        return savedUser;
-   
-    } catch (error) {
-        
-        console.log("Error in inserting User", error);
-        
-    }
+    // CALLING "sendMail" FOR EMAIL TRANSPORTATION AFTER SAVING DETAILS
+
+    sendMail(email, "Verifying User", content);
+
+    return savedUser;
+  } catch (error) {
+    console.log("Error in inserting User", error);
+  }
 }
 
 // JWT TOken Generator
 
 function generateToken(email) {
-    
-    const token = jwt.sign(email, process.env.signup_secret_key);
-    return token;
+  const token = jwt.sign(email, process.env.signup_secret_key);
+  return token;
 }
 
-
-//Insert SignUp User Controller
+//"InsertSignUpUser" IS USED FOR SAVING USER DETAILS IN "USER" TABLE
+// AFTER THE EMAIL VERIFICATION WITH TOKEN CONFIRMATION
 
 async function InsertSignUpUser(token) {
-
-    try {
-        let userVerify = await verifyUser.findOne({ token: token });
-        // console.log("userVerify",userVerify)
+  try {
+    let userVerify = await verifyUser.findOne({ token: token });
 
     if (userVerify) {
-        
-        const newUser = new User({
-            name: userVerify.name,
-            email: userVerify.email,
-            password: userVerify.password,
-            forgotPassword: {},
-            token:userVerify.token
-        })
+      const newUser = new User({
+        name: userVerify.name,
+        email: userVerify.email,
+        password: userVerify.password,
+        forgotPassword: {},
+        token: userVerify.token,
+      });
 
-        // console.log("userVerify", userVerify);
-        
-        // console.log("newUser",newUser)
+      // SAVING USER IN "USER" COLLECTION
 
-        await newUser.save();
+      await newUser.save();
 
-        await verifyUser.deleteOne({ token:token });
+      // DELETING THAT SPECIFIC USER IN VERIFICATION TABLE AFTER COMPLETE REGISTRATION
 
-        const content = `<h1>Registration Successful</h1>
+      await verifyUser.deleteOne({ token: token });
+
+      const content = `<h1>Registration Successful</h1>
         <h5>Welcome to our app</h5>
         <p>You are successfully register!!!</p>
         <p>Regards</p>
-        <p>Sundar</p>`
+        <p>Sundar</p>`;
 
-        sendMail(userVerify.email, "User Registered", content);
+      // SUCCESSFUL REGISTRATION WILL SHARE AS EMAIL USING "sendMail"
 
-        return `<h1>Registration Successful</h1>
+      sendMail(userVerify.email, "User Registered", content);
+
+      return `<h1>Registration Successful</h1>
         <h5>Welcome to our app</h5>
         <p>You are successfully register!!!</p>
         <p>Regards</p>
-        <p>Sundar</p>`
-
-    }
-    else {
-        return `<h1>Registration Failed</h1>
+        <p>Sundar</p>`;
+    } else {
+      return `<h1>Registration Failed</h1>
         <p>Link Expired.....</p>
         <p>Regards</p>
-        <p>Sundar</p>`
+        <p>Sundar</p>`;
     }
-    }
-    catch (error) {
+  } catch (error) {
+    console.log(error);
 
-        console.log(error);
-
-        return `<html>
+    return `<html>
         <body><h1>Registration Failed</h1>
         <p>Unexpected Error Happened....</p>
         <p>Regards</p>
         <p>Sundar</p></body>
-        </html>`
-        
-    }
-    
+        </html>`;
+  }
 }
 
-module.exports = { InsertVerifyUser,InsertSignUpUser };     
+module.exports = { InsertVerifyUser, InsertSignUpUser };
