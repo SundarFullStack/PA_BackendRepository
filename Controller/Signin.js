@@ -27,7 +27,7 @@ async function InsertVerifyUser(name, email, password) {
       token: token,
     });
 
-    const activationLink = `http://ec2-18-234-215-250.compute-1.amazonaws.com:9050/signin/${token}`;
+    const activationLink = `http://ec2-3-92-233-73.compute-1.amazonaws.com:6050/signin/${token}`;
 
     const content = `<h4>Hi, there</h4>
         <h5>Welcome to the app</h5>
