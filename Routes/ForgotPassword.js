@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
 
       // THE PASSWORD UPDATION FRONT END PAGE LINK WAS SHARING
 
-      let activationLink = `http://prod-frontend-server.s3-website-us-east-1.amazonaws.com/ForgotPassword/PassUpdate/${token}`;
+      let activationLink = `https://sundprodapplive.web.app/ForgotPassword/PassUpdate/${token}`;
 
       const content = `<h4>Hi, there</h4>
          <h5>Welcome to the app</h5>
