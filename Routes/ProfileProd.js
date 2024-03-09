@@ -8,6 +8,7 @@ const { InsertProdData } = require("../Controller/profProdControl");
 router.post("/", async (req, res) => {
   try {
     const {
+      
       ProfileCode,
       ProdStartTime,
       ProdEndTime,
@@ -17,22 +18,24 @@ router.post("/", async (req, res) => {
       ProdInCharge,
       ProdOperator,
       Shift,
+      UserId
     } = await req.body;
 
-    // console.log(ProfileCode,
-    //     ProdStartTime,
-    //     ProdEndTime,
-    //     Line,
-    //     Scrap,
-    //     ProfileLen,
-    //     ProdInCharge,
-    //     ProdOperator,
-    //     Shift
-    //     )
+    console.log(UserId,ProfileCode,
+        ProdStartTime,
+        ProdEndTime,
+        Line,
+        Scrap,
+        ProfileLen,
+        ProdInCharge,
+        ProdOperator,
+        Shift
+        )
     
     // ENSURING ALL FIELDS ARE AVAIL OR NOT AND SAVING DETAILS
 
     if (
+      !UserId ||
       !ProfileCode ||
       !ProdStartTime ||
       !ProdEndTime ||
@@ -52,6 +55,7 @@ router.post("/", async (req, res) => {
       // CALLING "InsertProdData"CONTROLLER FOR SAVING PRODUCTION DETAILS
 
       let savedProdData = await InsertProdData(
+        
         ProfileCode,
         ProdStartTime,
         ProdEndTime,
@@ -60,7 +64,8 @@ router.post("/", async (req, res) => {
         ProfileLen,
         ProdInCharge,
         ProdOperator,
-        Shift
+        Shift,
+        UserId
       );
 
       // console.log("savedProdData", savedProdData);
@@ -93,14 +98,15 @@ router.post("/", async (req, res) => {
 
 router.post("/profReportData", async (req, res) => {
   try {
-    const { ProfileCode, StartDate, EndDate } = await req.body;
+    const { ProfileCode, StartDate, EndDate,UserId } = await req.body;
 
     // console.log(ProfileCode, StartDate, EndDate);
 
     // CONDITION FOR OUR AGGREGATE METHOD
 
     const matchCriteria = {
-        ProfileCode: parseInt(ProfileCode),
+      ProfileCode: parseInt(ProfileCode),
+      UserId:UserId,
       ProdStartTime: {
         $gte: new Date(StartDate),
         $lte: new Date(EndDate),
@@ -174,32 +180,31 @@ router.get("/:ProfileCode", async (req, res) => {
 
 //Delete all Data from production Table
 
-// router.delete("/deleteAll", async (req, res) => {
-//     try {
+router.delete("/deleteAll", async (req, res) => {
+    try {
 
-//         const { ProfileCode } =await  req.body;
 
-//         const deleted = await prodModel.deleteMany();
-//     if (deleted) {
-//         res.status(200).json({
-//             success: true,
-//             message: "successfully Deleted All Data"
-//         })
-//     } else {
-//         res.status(400).json({
-//             success: false,
-//             message: "Can't able to delete all data"
-//         })
-//     }
-//     }catch(error){
-//         res.status(500).json({
-//             success: false,
-//             Error: error
+        const deleted = await prodModel.deleteMany();
+    if (deleted) {
+        res.status(200).json({
+            success: true,
+            message: "successfully Deleted All Data"
+        })
+    } else {
+        res.status(400).json({
+            success: false,
+            message: "Can't able to delete all data"
+        })
+    }
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            Error: error
 
-//         })
-//         console.log("error",error)
-//     }
+        })
+        console.log("error",error)
+    }
 
-// })
+})
 
 module.exports = router;

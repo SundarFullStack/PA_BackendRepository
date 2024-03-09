@@ -18,7 +18,8 @@ router.post("/", async (req, res) => {
             HoldedBy,
             PalletNo,
             Location,
-            Shift } = await req.body;
+            Shift,
+            UserId} = await req.body;
         
         // console.log(ProfileCode,
         //     HoldReason,
@@ -33,7 +34,7 @@ router.post("/", async (req, res) => {
         // VALIDATING IF ALL QUALITY DETAILS ARE AVAIL OR NOT FOR SAVING
 
         if (!ProfileCode || !HoldReason || !HoldedDate || !Quantity
-            || !Status || !HoldedBy || !PalletNo || !PalletNo || !Location || !Shift) {
+            || !Status || !HoldedBy || !PalletNo || !PalletNo || !Location || !Shift || !UserId) {
             
             res.status(400).json({
                 success: false,
@@ -50,6 +51,7 @@ router.post("/", async (req, res) => {
                 PalletNo: PalletNo,
                 Location: Location,
                 Shift: Shift,
+                UserId:UserId
               });
                 
                 const savedData = await QualityData.save();
@@ -79,12 +81,13 @@ router.post("/", async (req, res) => {
 
 router.post("/report", async (req, res) => {
     try {
-        const {ProfileCode,StartDate,EndDate} = await req.body;
+        const {ProfileCode,StartDate,EndDate,UserId} = await req.body;
 
     //MATCHING CONDITION
 
     const matchCriteria = {
-        ProfileCode:ProfileCode,
+        ProfileCode: ProfileCode,
+        UserId:UserId,
         HoldedDate: {
           $gte: new Date(StartDate),
           $lte: new Date(EndDate),
@@ -231,19 +234,19 @@ router.get("/Location", async (req, res) => {
 
 //For Deleting All Quality Details
 
-// router.delete("/deleteAll", async (req, res) => {
-//     try {
-//         const deleteAll = await QualityColl.deleteMany();
-//        if(deleteAll){
-//         res.status(200).json({
-//             success: true,
-//             message:"All Details Deleted Successfully!!!"
-//         })
-//        }
-//     } catch (error) {
-//         console.log("error",error)
-//     }
-// })
+router.delete("/deleteAll", async (req, res) => {
+    try {
+        const deleteAll = await QualityColl.deleteMany();
+       if(deleteAll){
+        res.status(200).json({
+            success: true,
+            message:"All Details Deleted Successfully!!!"
+        })
+       }
+    } catch (error) {
+        console.log("error",error)
+    }
+})
 
 
 module.exports = router;

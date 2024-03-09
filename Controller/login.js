@@ -29,6 +29,7 @@ async function AuthenticateUser(email, password) {
 
     const validPassword = await bcrypt.compare(password, userValid.password);
 
+    console.log(userValid,validPassword)
     if (validPassword) {
       // CREATING NEW LOGIN TOKEN FOR USER
 

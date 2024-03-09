@@ -4,24 +4,35 @@ const StoreColl = require("../Model/ProfStore");
 
 //OPERATION: FOR SENDING PROFILE CONSUMPTION DETAILS WITH RESPECTIVE TO PROFILE CODE
 
-router.get("/:ProfileCode", async (req, res) => {
+router.post("/:ProfileCode", async (req, res) => {
   try {
     // DESTRUCTURING PROFILE CODE FROM PARAMS OF REQUEST
 
     const { ProfileCode } = req.params;
-    // console.log("ProfileCode", ProfileCode);
+    const { UserId } = req.body;
+    console.log("ProfileCode", ProfileCode);
 
     // FINDING RECORDS FROM STORE CONSUMPTION TABLE "StoreColl"
 
-    const ResDocs = await StoreColl.find({ ProfileCode: ProfileCode });
+    const matchCriteria = {
+      ProfileCode: ProfileCode,
+      UserId:UserId,
+     
+    };
+  
+  
+  
+    //Aggregate operation
 
-    // console.log("ResDocs", ResDocs);
+    const result = await StoreColl.find(matchCriteria)
+  
+      console.log('Aggregate result:', result);
 
-    if (ResDocs) {
+    if (result) {
       res.status(200).json({
         success: true,
         message: "Profile Details Fetched Successfully",
-        data: ResDocs,
+        data: result,
       });
     } else {
       res.status(400).json({
@@ -41,12 +52,12 @@ router.put("/update/:id", async (req, res) => {
     // DESTRUCTURING ID AND ISSUE DETAILS FROM PARAMS AND REQUEST BODY
 
     const { id } = req.params;
-    const { qty, updatedDate, updatedBy, PalletNo, Location, Shift } = req.body;
+    const { qty, updatedDate, updatedBy, PalletNo, Location, Shift,UserId } = req.body;
 
     console.log(qty, updatedDate, updatedBy, PalletNo, Location, Shift )
     // Subtracting Issued qty from exist qty
 
-    const ExistDocs = await StoreColl.findOne({ _id: id });
+    const ExistDocs = await StoreColl.findOne({ _id: id ,UserId:UserId});
 
     const ExistDocsQty = ExistDocs.Quantity;
 
@@ -88,6 +99,24 @@ router.put("/update/:id", async (req, res) => {
     console.log("error", error);
   }
 });
+
+
+
+//For Deleting All Store Details
+
+router.delete("/deleteAll", async (req, res) => {
+  try {
+      const deleteAll = await StoreColl.deleteMany();
+     if(deleteAll){
+      res.status(200).json({
+          success: true,
+          message:"All Details Deleted Successfully!!!"
+      })
+     }
+  } catch (error) {
+      console.log("error",error)
+  }
+})
 
 module.exports = router;
 

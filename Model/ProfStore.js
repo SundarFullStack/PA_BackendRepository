@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const StoreSchema = new mongoose.Schema({
+    UserId: {
+        type:String,
+        required:true
+      },
     ProfileCode: {
         type: String,
         required:true,
@@ -47,7 +51,7 @@ const StoreSchema = new mongoose.Schema({
     ConsumedQty: {
         type: Number,
         required:true,
-    },
+    }
 }, {
     collection:"ProfileStore"
 })

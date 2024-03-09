@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const qualitySchema = new mongoose.Schema({
+    UserId: {
+        type:String,
+        required:true
+      },
     ProfileCode: {
         type: String,
         required:true,
@@ -41,7 +45,7 @@ const qualitySchema = new mongoose.Schema({
     Shift: {
         type: String,
         required:true,
-    },
+    }
 }, {
     collection:"ProfileQuality"
 })

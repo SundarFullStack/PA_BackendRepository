@@ -17,6 +17,7 @@ router.post("/", async (req, res) => {
       PalletNo,
       Location,
       Shift,
+      UserId
     } = await req.body;
 
     // console.log(
@@ -38,7 +39,8 @@ router.post("/", async (req, res) => {
       !ConsumedBy ||
       !PalletNo ||
       !Location ||
-      !Shift
+      !Shift ||
+      !UserId
     ) {
       res.status(400).json({
         success: false,
@@ -57,6 +59,7 @@ router.post("/", async (req, res) => {
         IssuedBy: "Employee",
         ConsumedQty: 0,
         IssuedQty: 0,
+        UserId:UserId
       });
 
       const savedData = await StoreData.save();
@@ -82,7 +85,7 @@ router.post("/", async (req, res) => {
 //OPERATION : FOR SENDING CONSUMPTION DETAILS AS REPORT AGAINST SOME CONDITIONS
 router.post("/report", async (req, res) => {
   try {
-    const { ProfileCode, StartDate, EndDate } = await req.body;
+    const { ProfileCode, StartDate, EndDate,UserId } = await req.body;
 
     // console.log(ProfileCode, StartDate, EndDate);
 
@@ -90,6 +93,7 @@ router.post("/report", async (req, res) => {
 
     const matchCriteria = {
       ProfileCode: ProfileCode,
+      UserId:UserId,
       ConsumptionDate: {
         $gte: new Date(StartDate),
         $lte: new Date(EndDate),
@@ -192,4 +196,21 @@ router.get("/Location", async (req, res) => {
   }
 });
 
+
+
+//For Deleting All Store Details
+
+router.delete("/deleteAll", async (req, res) => {
+  try {
+      const deleteAll = await StoreColl.deleteMany();
+     if(deleteAll){
+      res.status(200).json({
+          success: true,
+          message:"All Details Deleted Successfully!!!"
+      })
+     }
+  } catch (error) {
+      console.log("error",error)
+  }
+})
 module.exports = router;

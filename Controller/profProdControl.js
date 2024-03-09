@@ -11,10 +11,12 @@ async function InsertProdData(
   ProfileLen,
   ProdInCharge,
   ProdOperator,
-  Shift
+  Shift,
+  UserId,
 ) {
   try {
     const prodData = new prodColl({
+      
       ProfileCode: ProfileCode,
       ProdStartTime: ProdStartTime,
       ProdEndTime: ProdEndTime,
@@ -24,6 +26,7 @@ async function InsertProdData(
       ProdInCharge: ProdInCharge,
       ProdOperator: ProdOperator,
       Shift: Shift,
+      UserId:UserId
     });
 
     // SAVING PRODUCTION DETAILS OF DATA IN "prodData" INSTANCE OBJECT

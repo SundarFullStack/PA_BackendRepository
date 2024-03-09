@@ -1,14 +1,11 @@
 const mongoose = require("mongoose");
 
 const prodSchema = new mongoose.Schema({
+ 
   ProfileCode: {
     type: Number,
     required: true,
   },
-  // ProfileDesc: {
-  //   type: String,
-  //   required: true,
-  // },
   ProdStartTime: {
     type: Date,
     default:new Date()
@@ -40,6 +37,15 @@ const prodSchema = new mongoose.Schema({
   Shift: {
     type: String,
     required: true,
+  },
+  Status: {
+    type: String,
+    required: true,
+    default:"P"
+  },
+  UserId: {
+    type:String,
+    required:true
   }
 }, {
     collection:"ProdCollection"
